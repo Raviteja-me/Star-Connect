@@ -1,13 +1,14 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';  // Added Link import
 import { Mic, Music, Headphones, Guitar, Search, Calendar, CreditCard, Star, Shield, Clock, Users, Award, MessageSquare } from 'lucide-react';
 import Logo from '../components/Logo';
 
 const categories = [
-  { id: 'Hip-Hop Artist', name: 'Hip-Hop Artist', icon: Mic, color: 'bg-purple-500' },
-  { id: 'Singer', name: 'Singer', icon: Music, color: 'bg-blue-500' },
+  { id: 'All Categories', name: 'All Categories', icon: Star, color: 'bg-purple-500' },
+  { id: 'Pop Singer', name: 'Pop Singer', icon: Mic, color: 'bg-blue-500' },
   { id: 'DJ', name: 'DJ', icon: Headphones, color: 'bg-green-500' },
-  { id: 'Instrumentalists', name: 'Instrumentalists', icon: Guitar, color: 'bg-pink-500' },
+  { id: 'Band', name: 'Band', icon: Users, color: 'bg-pink-500' },
+  { id: 'Hip-Hop Artist', name: 'Hip-Hop Artist', icon: Mic, color: 'bg-red-500' }  // Added new category
 ];
 
 const featuredStars = [
@@ -143,18 +144,18 @@ const HomePage = () => {
           <h1 className="text-5xl font-bold mb-6 animate-fade-in">Experience Unforgettable Moments with Your Favorite Rock Stars</h1>
           <p className="text-xl mb-8 animate-fade-in-delay">Book personalized experiences.</p>
           <div className="flex justify-center gap-4 animate-fade-in-delay-2">
-            <button
-              onClick={() => navigate('/book-star')}
+            <Link 
+              to="/book-star"
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-semibold transition transform hover:scale-105"
             >
               Book a Star
-            </button>
-            <button
-              onClick={() => navigate('/register-star')}
+            </Link>
+            <Link
+              to="/register-star"
               className="bg-white hover:bg-gray-100 text-indigo-600 px-8 py-3 rounded-lg font-semibold transition transform hover:scale-105"
             >
               Register as a Star
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -167,7 +168,9 @@ const HomePage = () => {
             {categories.map((category) => (
               <div
                 key={category.id}
-                onClick={() => navigate(`/category/${category.id}`)}
+                onClick={() => {
+                  navigate('/book-star', { state: { selectedCategory: category.name } });
+                }}
                 className="bg-white dark:bg-gray-700 rounded-xl shadow-md p-6 cursor-pointer transform hover:scale-105 transition"
               >
                 <div className={`${category.color} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
@@ -279,9 +282,6 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
-      {/* Existing Categories Section */}
-      {/* ... rest of the code ... */}
     </div>
   );
 };

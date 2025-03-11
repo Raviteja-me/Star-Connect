@@ -37,10 +37,10 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/category/:categoryName" element={<CategoryPage />} />
               <Route path="/star/:starId" element={<StarDetailsPage />} />
-              <Route path="/book/:starId" element={<BookStarPage />} />
+              <Route path="/book-star" element={<BookStarPage />} /> {/* Updated this line */}
               <Route path="/booking-confirmation" element={<BookingConfirmationPage />} />
               <Route path="/register-star" element={<RegisterStarPage />} />
-              <Route path="/profile" element={<ProfilePage />} /> {/* Add the new route */}
+              <Route path="/profile" element={<ProfilePage />} />
             </Routes>
           </main>
           <Footer />
