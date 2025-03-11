@@ -1,16 +1,13 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { auth, db } from '../config/firebase';
-import { onAuthStateChanged, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
+import { onAuthStateChanged, User, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, pass: string) => Promise<void>;
   signUp: (email: string, pass: string, username: string) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
-  signOut: () => Promise<void>;
 }
 
 const defaultContext: AuthContextType = {
@@ -18,8 +15,6 @@ const defaultContext: AuthContextType = {
   loading: true,
   signIn: async () => {},
   signUp: async () => {},
-  signInWithGoogle: async () => {},
-  signOut: async () => {}
 };
 
 export const AuthContext = createContext<AuthContextType>(defaultContext);
@@ -27,7 +22,6 @@ export const AuthContext = createContext<AuthContextType>(defaultContext);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -67,39 +61,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      // Check if this is a new user
-      const userRef = doc(db, "users", result.user.uid);
-      const docSnap = await getDoc(userRef);
-
-      if (!docSnap.exists()) {
-        // Add new user to Firestore
-        await setDoc(userRef, {
-          uid: result.user.uid,
-          username: result.user.displayName,
-          email: result.user.email,
-        });
-      }
-
-    } catch (error) {
-      console.error("Error during Google sign-in:", error);
-    }
-  };
-
-    const signOut = async () => {
-    try {
-      await auth.signOut();
-      navigate("/"); // Immediate redirect to home
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
-
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp }}>
       {!loading && children}
     </AuthContext.Provider>
   );

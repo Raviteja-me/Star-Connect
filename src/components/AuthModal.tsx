@@ -1,21 +1,19 @@
 import React, { useState, useContext } from 'react';
-import { X, User, Mail, Lock, LogOut } from 'lucide-react';
+import { X, User, Mail, Lock } from 'lucide-react';
 import { AuthContext } from '../contexts/AuthContext';
-import { FcGoogle } from 'react-icons/fc';
 
 const AuthModal = ({ isOpen, onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState(''); // Add username state
-  const { signIn, signUp, signInWithGoogle, signOut } = useContext(AuthContext);
+  const { signIn, signUp } = useContext(AuthContext);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (isLogin) {
       await signIn(email, password);
     } else {
-      await signUp(email, password, username); // Pass username
+      await signUp(email, password);
     }
     onClose();
   };
@@ -34,23 +32,6 @@ const AuthModal = ({ isOpen, onClose }) => {
           </button>
         </div>
         <form onSubmit={handleFormSubmit} className="space-y-4">
-          {!isLogin && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Username
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 dark:text-gray-200"
-                  required
-                />
-              </div>
-            </div>
-          )}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Email
@@ -88,16 +69,6 @@ const AuthModal = ({ isOpen, onClose }) => {
             {isLogin ? 'Sign In' : 'Sign Up'}
           </button>
         </form>
-
-        {/* Google Sign-In Button */}
-        <button
-          onClick={signInWithGoogle}
-          className="w-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-2 rounded-lg font-semibold mt-4 flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 transition"
-        >
-          <FcGoogle size={24} />
-          <span>{isLogin ? 'Sign In with Google' : 'Sign Up with Google'}</span>
-        </button>
-
         <div className="text-center mt-4">
           <button
             onClick={() => setIsLogin(!isLogin)}

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { LogOut, User, ChevronDown } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { auth, db } from '../config/firebase';
+import { signOut } from 'firebase/auth';
+import { Sun, Moon, LogOut, Star, User } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
 
 interface DropdownMenuProps {
   isDark: boolean;
@@ -10,34 +12,76 @@ interface DropdownMenuProps {
 }
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({ isDark, toggleDarkMode, onClose }) => {
-  const { user, signOut } = useAuth();
+  const [isStar, setIsStar] = useState(false);
 
-  const handleSignOut = async () => {
-    await signOut();
-    onClose(); // Close the dropdown after logout
+  useEffect(() => {
+    const checkStarRegistration = async () => {
+      if (auth.currentUser) {
+        const starRef = doc(db, 'stars', auth.currentUser.uid);
+        const starDoc = await getDoc(starRef);
+        setIsStar(starDoc.exists());
+      }
+    };
+
+    checkStarRegistration();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      onClose();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   return (
-    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-20">
-      <div className="py-1">
-        {user?.displayName && (
-          <Link to="/profile" onClick={onClose} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
-            Profile
-          </Link>
+    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 animate-fade-in">
+      {/* Arrow */}
+      <div className="absolute top-[-5px] right-3 h-0 w-0 border-l-[5px] border-r-[5px] border-b-[5px] border-l-transparent border-r-transparent border-b-white dark:border-b-gray-800"></div>
+
+      <button
+        onClick={toggleDarkMode}
+        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+      >
+        {isDark ? (
+          <>
+            <Sun className="w-4 h-4 mr-2" />
+            Light Mode
+          </>
+        ) : (
+          <>
+            <Moon className="w-4 h-4 mr-2" />
+            Dark Mode
+          </>
         )}
-        <Link to="/register-star" onClick={onClose} className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">
+      </button>
+      {isStar ? (
+        <Link
+          to="/profile"
+          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+          onClick={onClose}
+        >
+          <User className="w-4 h-4 mr-2 inline-block" />
+          Profile
+        </Link>
+      ) : (
+        <Link
+          to="/register-star"
+          className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+          onClick={onClose}
+        >
+          <Star className="w-4 h-4 mr-2 inline-block" />
           Register as a Star
         </Link>
-        <button
-          onClick={handleSignOut}
-          className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-        >
-          <span className="flex items-center gap-2">
-            <LogOut className="w-4 h-4" />
-            Sign Out
-          </span>
-        </button>
-      </div>
+      )}
+      <button
+        onClick={handleLogout}
+        className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+      >
+        <LogOut className="w-4 h-4 mr-2" />
+        Logout
+      </button>
     </div>
   );
 };
