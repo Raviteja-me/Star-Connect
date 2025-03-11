@@ -124,10 +124,10 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   return (
-    <div>
+    <div className="text-gray-900 dark:text-gray-100">
       {/* Hero Section */}
       <section className="relative h-[600px] flex items-center justify-center text-white overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage: 'url(https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1920)',
@@ -135,7 +135,7 @@ const HomePage = () => {
         >
           <div className="absolute inset-0 bg-black bg-opacity-60"></div>
         </div>
-        
+
         <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
           <div className="mb-8 flex justify-center">
             <Logo size="lg" animated />
@@ -143,13 +143,13 @@ const HomePage = () => {
           <h1 className="text-5xl font-bold mb-6 animate-fade-in">Experience Unforgettable Moments with Your Favorite Rock Stars</h1>
           <p className="text-xl mb-8 animate-fade-in-delay">Book personalized experiences.</p>
           <div className="flex justify-center gap-4 animate-fade-in-delay-2">
-            <button 
+            <button
               onClick={() => navigate('/book-star')}
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-semibold transition transform hover:scale-105"
             >
               Book a Star
             </button>
-            <button 
+            <button
               onClick={() => navigate('/register-star')}
               className="bg-white hover:bg-gray-100 text-indigo-600 px-8 py-3 rounded-lg font-semibold transition transform hover:scale-105"
             >

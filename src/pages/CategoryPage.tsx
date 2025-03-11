@@ -50,10 +50,10 @@ const CategoryPage = () => {
   };
 
   return (
-    <div>
+    <div className="text-gray-900 dark:text-gray-100">
       {/* Category Hero */}
       <div className="relative h-[300px] flex items-center justify-center text-white">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage: `url(${categoryInfo.image})`
@@ -70,14 +70,14 @@ const CategoryPage = () => {
       {/* Filters */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex flex-wrap gap-4 mb-8">
-          <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+          <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">
             <Filter className="w-5 h-5" />
             Price Range
           </button>
-          <button className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+          <button className="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">
             Rating (4+)
           </button>
-          <button className="px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+          <button className="px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition">
             Available Today
           </button>
         </div>
@@ -88,29 +88,29 @@ const CategoryPage = () => {
             <div
               key={star.id}
               onClick={() => navigate(`/star/${star.id}`)}
-              className="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer transform hover:scale-105 transition"
+              className="bg-white dark:bg-gray-700 rounded-xl shadow-md overflow-hidden cursor-pointer transform hover:scale-105 transition"
             >
               <img src={star.image} alt={star.name} className="w-full h-48 object-cover" />
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{star.name}</h3>
+                <h3 className="text-xl font-semibold mb-2 dark:text-white">{star.name}</h3>
                 <div className="flex items-center mb-3">
                   <Star className="w-5 h-5 text-yellow-400" />
                   <span className="ml-1">{star.rating}</span>
-                  <span className="text-gray-400 ml-1">({star.reviews} reviews)</span>
+                  <span className="text-gray-400 dark:text-gray-400 ml-1">({star.reviews} reviews)</span>
                 </div>
                 <div className="mb-4">
                   <div className="flex flex-wrap gap-2">
                     {star.specialties.map((specialty, index) => (
                       <span
                         key={index}
-                        className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-sm"
+                        className="bg-gray-100 dark:bg-gray-600 text-gray-700 dark:text-gray-200 px-2 py-1 rounded-full text-sm"
                       >
                         {specialty}
                       </span>
                     ))}
                   </div>
                 </div>
-                <p className="text-indigo-600 font-semibold">{star.price}</p>
+                <p className="text-indigo-600 dark:text-indigo-400 font-semibold">{star.price}</p>
               </div>
             </div>
           ))}
