@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, User, Sun, Moon, X } from 'lucide-react';
+import { Menu, User, Sun, Moon, X, ChevronDown } from 'lucide-react';
 import AuthModal from './AuthModal';
 import Logo from './Logo';
+import { useAuth } from '../contexts/AuthContext';
+import DropdownMenu from './DropdownMenu';
 
 const Navbar = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown
+  const { user } = useAuth();
 
   useEffect(() => {
-    // Check initial theme
     if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       setIsDark(true);
       document.documentElement.classList.add('dark');
@@ -27,6 +30,14 @@ const Navbar = () => {
     }
     setIsDark(!isDark);
   };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const closeDropdown = () => {
+    setIsDropdownOpen(false);
+  }
 
   return (
     <>
@@ -54,13 +65,28 @@ const Navbar = () => {
                   <Moon className="w-5 h-5" />
                 )}
               </button>
-              <button
-                onClick={() => setIsAuthModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
-              >
-                <User className="w-5 h-5" />
-                <span>Sign In</span>
-              </button>
+              {user ? (
+                <div className="relative">
+                  <button
+                    onClick={toggleDropdown}
+                    className="text-gray-700 dark:text-gray-200 flex items-center gap-1"
+                  >
+                    <span>{user.displayName || user.email}</span>
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                  {isDropdownOpen && (
+                    <DropdownMenu isDark={isDark} toggleDarkMode={toggleDarkMode} onClose={closeDropdown} />
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+                >
+                  <User className="w-5 h-5" />
+                  <span>Sign In</span>
+                </button>
+              )}
             </div>
 
             <div className="md:hidden">
@@ -94,13 +120,28 @@ const Navbar = () => {
                 <Moon className="w-8 h-8" />
               )}
             </button>
-            <button
-              onClick={() => setIsAuthModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
-            >
-              <User className="w-5 h-5" />
-              <span>Sign In</span>
-            </button>
+            {user ? (
+              <div className="relative w-full">
+                <button
+                    onClick={toggleDropdown}
+                    className="text-gray-700 dark:text-gray-200 w-full text-center flex items-center justify-center gap-1"
+                  >
+                    <span>{user.displayName || user.email}</span>
+                    <ChevronDown className="w-4 h-4" />
+                </button>
+                {isDropdownOpen && (
+                    <DropdownMenu isDark={isDark} toggleDarkMode={toggleDarkMode} onClose={closeDropdown}/>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="flex items-center gap-2 px-4 py-2 text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+              >
+                <User className="w-5 h-5" />
+                <span>Sign In</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

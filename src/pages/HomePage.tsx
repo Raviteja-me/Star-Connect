@@ -149,12 +149,7 @@ const HomePage = () => {
             >
               Book a Star
             </button>
-            <button
-              onClick={() => navigate('/register-star')}
-              className="bg-white hover:bg-gray-100 text-indigo-600 px-8 py-3 rounded-lg font-semibold transition transform hover:scale-105"
-            >
-              Register as a Star
-            </button>
+            {/* Removed the "Register as a Star" button */}
           </div>
         </div>
       </section>
