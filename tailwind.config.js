@@ -10,7 +10,13 @@ export default {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
+      aspectRatio: {
+        'w-16': '16',
+        'h-9': '9',
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/aspect-ratio'),
+  ],
 }

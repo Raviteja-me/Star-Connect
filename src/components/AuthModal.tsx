@@ -6,16 +6,32 @@ const AuthModal = ({ isOpen, onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { signIn, signUp } = useContext(AuthContext);
+  const [username, setUsername] = useState('');
+  const { signIn, signUp, signInWithGoogle } = useContext(AuthContext);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if (isLogin) {
-      await signIn(email, password);
-    } else {
-      await signUp(email, password);
+    try {
+      if (isLogin) {
+        await signIn(email, password);
+      } else {
+        await signUp(email, password, username);
+      }
+      onClose();
+    } catch (error) {
+      console.error("Authentication error:", error.message);
+      alert(error.message);
     }
-    onClose();
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+      onClose();
+    } catch (error) {
+      console.error("Google Sign-In error:", error.message);
+      alert(error.message);
+    }
   };
 
   return (
@@ -32,6 +48,23 @@ const AuthModal = ({ isOpen, onClose }) => {
           </button>
         </div>
         <form onSubmit={handleFormSubmit} className="space-y-4">
+          {!isLogin && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Username
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white dark:bg-gray-700 dark:text-gray-200"
+                  required
+                />
+              </div>
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Email
@@ -69,6 +102,14 @@ const AuthModal = ({ isOpen, onClose }) => {
             {isLogin ? 'Sign In' : 'Sign Up'}
           </button>
         </form>
+
+        <button
+          onClick={handleGoogleSignIn}
+          className="w-full mt-4 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Sign In with Google
+        </button>
+
         <div className="text-center mt-4">
           <button
             onClick={() => setIsLogin(!isLogin)}
