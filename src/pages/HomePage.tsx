@@ -1,7 +1,11 @@
-import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';  // Added Link import
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { Mic, Music, Headphones, Guitar, Search, Calendar, CreditCard, Star, Shield, Clock, Users, Award, MessageSquare } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import AuthModal from '../components/AuthModal';
 import Logo from '../components/Logo';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../config/firebase';
 
 const categories = [
   { id: 'All Categories', name: 'All Categories', icon: Star, color: 'bg-purple-500' },
@@ -123,6 +127,39 @@ const faqs = [
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [featuredStars, setFeaturedStars] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeaturedStars = async () => {
+      try {
+        const starsRef = collection(db, 'stars');
+        const querySnapshot = await getDocs(starsRef);
+        const starsData = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        // Get only first 3 stars for featured section
+        setFeaturedStars(starsData.slice(0, 3));
+      } catch (error) {
+        console.error('Error fetching featured stars:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedStars();
+  }, []);
+
+  const handleActionClick = (path: string) => {
+    if (user) {
+      navigate(path);
+    } else {
+      setIsAuthModalOpen(true);
+    }
+  };
 
   return (
     <div className="text-gray-900 dark:text-gray-100">
@@ -144,18 +181,18 @@ const HomePage = () => {
           <h1 className="text-5xl font-bold mb-6 animate-fade-in">Experience Unforgettable Moments with Your Favorite Rock Stars</h1>
           <p className="text-xl mb-8 animate-fade-in-delay">Book personalized experiences.</p>
           <div className="flex justify-center gap-4 animate-fade-in-delay-2">
-            <Link 
-              to="/book-star"
+            <button 
+              onClick={() => handleActionClick('/book-star')}
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-semibold transition transform hover:scale-105"
             >
               Book a Star
-            </Link>
-            <Link
-              to="/register-star"
+            </button>
+            <button
+              onClick={() => handleActionClick('/register-star')}
               className="bg-white hover:bg-gray-100 text-indigo-600 px-8 py-3 rounded-lg font-semibold transition transform hover:scale-105"
             >
               Register as a Star
-            </Link>
+            </button>
           </div>
         </div>
       </section>
@@ -168,9 +205,7 @@ const HomePage = () => {
             {categories.map((category) => (
               <div
                 key={category.id}
-                onClick={() => {
-                  navigate('/book-star', { state: { selectedCategory: category.name } });
-                }}
+                onClick={() => handleActionClick(`/category/${category.id}`)}
                 className="bg-white dark:bg-gray-700 rounded-xl shadow-md p-6 cursor-pointer transform hover:scale-105 transition"
               >
                 <div className={`${category.color} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
@@ -187,22 +222,26 @@ const HomePage = () => {
       <section className="py-16 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12 dark:text-white">Featured Stars</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredStars.map((star) => (
-              <div
-                key={star.id}
-                onClick={() => navigate(`/star/${star.id}`)}
-                className="bg-white dark:bg-gray-700 rounded-xl shadow-md overflow-hidden cursor-pointer transform hover:scale-105 transition"
-              >
-                <img src={star.image} alt={star.name} className="w-full h-48 object-cover" />
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2 dark:text-white">{star.name}</h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-2">{star.category}</p>
-                  <p className="text-indigo-600 dark:text-indigo-400 font-semibold">{star.price}</p>
+          {loading ? (
+            <div className="text-center">Loading featured stars...</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {featuredStars.map((star) => (
+                <div
+                  key={star.id}
+                  onClick={() => handleActionClick(`/star/${star.id}`)}
+                  className="bg-white dark:bg-gray-700 rounded-xl shadow-md overflow-hidden cursor-pointer transform hover:scale-105 transition"
+                >
+                  <img src={star.profilePicture} alt={star.name} className="w-full h-48 object-cover" />
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-2 dark:text-white">{star.name}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 mb-2">{star.category}</p>
+                    <p className="text-indigo-600 dark:text-indigo-400 font-semibold">${star.hourlyRate}/hour</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -282,6 +321,12 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      {/* AuthModal */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+      />
     </div>
   );
 };

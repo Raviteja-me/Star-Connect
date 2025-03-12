@@ -9,9 +9,11 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
     GoogleAuthProvider,
     signInWithPopup,
     linkWithCredential,
-    fetchSignInMethodsForEmail
+    fetchSignInMethodsForEmail,
+    signOut
   } from 'firebase/auth';
   import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 
   interface AuthContextType {
     user: User | null;
@@ -19,6 +21,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
     signIn: (email: string, pass: string) => Promise<void>;
     signUp: (email: string, pass: string, username: string) => Promise<void>;
     signInWithGoogle: () => Promise<void>;
+    signOut: () => Promise<void>;
   }
 
   const defaultContext: AuthContextType = {
@@ -27,6 +30,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
     signIn: async () => {},
     signUp: async () => {},
     signInWithGoogle: async () => {},
+    signOut: async () => {}
   };
 
   export const AuthContext = createContext<AuthContextType>(defaultContext);
@@ -34,15 +38,19 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
   export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
       const unsubscribe = onAuthStateChanged(auth, (user) => {
         setUser(user);
         setLoading(false);
+        if (!user) {
+          navigate('/');
+        }
       });
 
       return unsubscribe;
-    }, []);
+    }, [navigate]);
 
     const signIn = async (email, password) => {
       try {
@@ -132,8 +140,17 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
       }
     };
 
+    const signOutUser = async () => {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error("Error signing out:", error);
+        throw error;
+      }
+    }
+
     return (
-      <AuthContext.Provider value={{ user, loading, signIn, signUp, signInWithGoogle }}>
+      <AuthContext.Provider value={{ user, loading, signIn, signUp, signInWithGoogle, signOut: signOutUser }}>
         {!loading && children}
       </AuthContext.Provider>
     );

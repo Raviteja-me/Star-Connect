@@ -7,7 +7,8 @@ import StarDetailsPage from './pages/StarDetailsPage';
 import BookStarPage from './pages/BookStarPage';
 import BookingConfirmationPage from './pages/BookingConfirmationPage';
 import RegisterStarPage from './pages/RegisterStarPage';
-import ProfilePage from './pages/ProfilePage'; // Import the new ProfilePage
+import ProfilePage from './pages/ProfilePage';
+import ChatPage from './pages/ChatPage'; // Import ChatPage
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import './index.css';
@@ -37,10 +38,11 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/category/:categoryName" element={<CategoryPage />} />
               <Route path="/star/:starId" element={<StarDetailsPage />} />
-              <Route path="/book-star" element={<BookStarPage />} /> {/* Updated this line */}
+              <Route path="/book-star" element={<BookStarPage />} />
               <Route path="/booking-confirmation" element={<BookingConfirmationPage />} />
               <Route path="/register-star" element={<RegisterStarPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/chat/:starId" element={<ChatPage starName="Star Name" starProfilePicture="path/to/profile.jpg" />} />
             </Routes>
           </main>
           <Footer />

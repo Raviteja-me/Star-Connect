@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Star, Award, MessageCircle, Video, Image, Users, Mail, Phone } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { useAuth } from '../contexts/AuthContext';
+import AuthModal from '../components/AuthModal';
 
 const StarDetailsPage = () => {
   const { starId } = useParams();
@@ -12,6 +14,9 @@ const StarDetailsPage = () => {
   const [selectedTime, setSelectedTime] = useState('10:00');
   const [starData, setStarData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchStarData = async () => {
@@ -31,6 +36,20 @@ const StarDetailsPage = () => {
       fetchStarData();
     }
   }, [starId]);
+
+    const handleChatButtonClick = () => {
+    if (user) {
+      // Redirect to chat page if user is logged in
+      navigate(`/chat/${starId}`);
+    } else {
+      // Open the authentication modal if user is not logged in
+      setIsAuthModalOpen(true);
+    }
+  };
+
+  const handleAuthModalClose = () => {
+    setIsAuthModalOpen(false);
+  }
 
   if (loading) {
     return <div className="text-center py-8">Loading...</div>;
@@ -223,13 +242,14 @@ const StarDetailsPage = () => {
               </button>
 
               {/* Chat Button (Placeholder) */}
-              <Link to="#" className="w-full block text-center bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+              <button onClick={handleChatButtonClick} className="w-full block text-center bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition">
                 Chat with Star
-              </Link>
+              </button>
             </div>
           </div>
         </div>
       </div>
+      <AuthModal isOpen={isAuthModalOpen} onClose={handleAuthModalClose} />
     </div>
   );
 };
