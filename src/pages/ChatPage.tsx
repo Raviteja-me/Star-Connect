@@ -91,7 +91,7 @@ const ChatPage = () => {
       await addDoc(chatsRef, {
         participants: [auth.currentUser.uid, starId],
         lastMessage: newMessage,
-        lastSenderName: isUserStar ? starData?.name : user?.displayName || user?.email,
+        lastSenderName: auth.currentUser.uid,
         updatedAt: serverTimestamp(),
       });
 
@@ -156,7 +156,7 @@ const ChatPage = () => {
                     : 'bg-white dark:bg-gray-700'
                 }`}
               >
-                <p className="text-sm font-medium mb-1">{message.senderName}</p>
+                <p className="text-sm font-medium mb-1">{message.senderId === auth.currentUser?.uid ? 'me' : message.senderName}</p>
                 <p>{message.text}</p>
               </div>
             </div>

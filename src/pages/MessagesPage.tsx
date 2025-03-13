@@ -34,47 +34,46 @@ const MessagesPage = () => {
     );
 
     const unsubscribe = onSnapshot(q, async (snapshot) => {
-      const uniqueChatsMap = new Map<string, Chat>();
-      
-      for (const doc of snapshot.docs) {
-        const chatData = doc.data();
+      try {
+        const uniqueChatsMap = new Map<string, Chat>();
         
-        // Skip chats without lastMessage
-        if (!chatData.lastMessage) continue;
+        for (const docSnapshot of snapshot.docs) {
+          const chatData = docSnapshot.data();
+          
+          if (!chatData || !chatData.lastMessage) continue;
 
-        const otherParticipantId = chatData.participants.find(
-          (id: string) => id !== user.uid
-        );
+          const otherParticipantId = chatData.participants?.find(id => id !== user.uid);
+          if (!otherParticipantId) continue;
 
-        // Use participant IDs as unique key to prevent duplicates
-        const chatKey = [user.uid, otherParticipantId].sort().join('_');
+          const conversationKey = [user.uid, otherParticipantId].sort().join('_');
 
-        // Only add if this chat hasn't been added yet
-        if (!uniqueChatsMap.has(chatKey)) {
-          let userData;
-          try {
-            userData = await getDoc(doc(db, 'stars', otherParticipantId));
-            if (!userData.exists()) {
-              userData = await getDoc(doc(db, 'users', otherParticipantId));
+          if (!uniqueChatsMap.has(conversationKey)) {
+            try {
+              const userDocRef = doc(db, 'users', otherParticipantId);
+              const userDocSnap = await getDoc(userDocRef);
+              const userData = userDocSnap.exists() ? userDocSnap.data() : null;
+
+              uniqueChatsMap.set(conversationKey, {
+                id: docSnapshot.id,
+                lastMessage: chatData.lastMessage || '',
+                lastSenderName: chatData.lastSenderName || 'Anonymous',
+                participants: chatData.participants || [],
+                updatedAt: chatData.updatedAt,
+                otherUserName: userData?.username || 'Anonymous',
+                otherUserImage: userData?.profilePicture || null
+              });
+            } catch (error) {
+              console.error('Error fetching user data:', error);
             }
-          } catch (error) {
-            console.error('Error fetching user data:', error);
           }
-
-          uniqueChatsMap.set(chatKey, {
-            id: doc.id,
-            lastMessage: chatData.lastMessage,
-            lastSenderName: chatData.lastSenderName || '',
-            participants: chatData.participants,
-            updatedAt: chatData.updatedAt,
-            otherUserName: userData?.exists() ? userData.data().name || userData.data().username : 'Unknown User',
-            otherUserImage: userData?.exists() ? userData.data().profilePicture : null
-          });
         }
-      }
 
-      setChats(Array.from(uniqueChatsMap.values()));
-      setLoading(false);
+        setChats(Array.from(uniqueChatsMap.values()));
+      } catch (error) {
+        console.error('Error processing chats:', error);
+      } finally {
+        setLoading(false);
+      }
     });
 
     return () => unsubscribe();
@@ -95,7 +94,7 @@ const MessagesPage = () => {
             <div className="p-4 text-center text-gray-500">No messages yet</div>
           ) : (
             chats.map((chat) => (
-              <Link 
+              <Link
                 to={`/chat/${chat.participants.find(id => id !== user?.uid)}`}
                 key={chat.id}
                 className="block hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -116,7 +115,7 @@ const MessagesPage = () => {
                     <div className="flex-1">
                       <h3 className="font-semibold">{chat.otherUserName}</h3>
                       <p className="text-sm text-gray-500 truncate">
-                        {chat.lastSenderName}: {chat.lastMessage}
+                        {chat.lastSenderName === user?.displayName ? 'Me: ' : ''}{chat.lastMessage}
                       </p>
                     </div>
                     {chat.updatedAt && (
