@@ -8,7 +8,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
 const categories = [
-  { id: 'All Categories', name: 'All Categories', icon: Star, color: 'bg-purple-500' },
+  
   { id: 'Pop Singer', name: 'Pop Singer', icon: Mic, color: 'bg-blue-500' },
   { id: 'DJ', name: 'DJ', icon: Headphones, color: 'bg-green-500' },
   { id: 'Band', name: 'Band', icon: Users, color: 'bg-pink-500' },

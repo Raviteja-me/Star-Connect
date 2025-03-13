@@ -8,10 +8,10 @@ import BookStarPage from './pages/BookStarPage';
 import BookingConfirmationPage from './pages/BookingConfirmationPage';
 import RegisterStarPage from './pages/RegisterStarPage';
 import ProfilePage from './pages/ProfilePage';
-import ChatPage from './pages/ChatPage'; // Import ChatPage
+import ChatPage from './pages/ChatPage';
+import MessagesPage from './pages/MessagesPage';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import './index.css';
 
 function App() {
   const [isDark, setIsDark] = useState(false);
@@ -36,13 +36,15 @@ function App() {
           <main className="py-10">
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/category/:categoryName" element={<CategoryPage />} />
+              <Route path="/category/:categoryId" element={<CategoryPage />} />
               <Route path="/star/:starId" element={<StarDetailsPage />} />
+              <Route path="/book/:starId" element={<BookStarPage />} />
               <Route path="/book-star" element={<BookStarPage />} />
               <Route path="/booking-confirmation" element={<BookingConfirmationPage />} />
               <Route path="/register-star" element={<RegisterStarPage />} />
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/chat/:starId" element={<ChatPage starName="Star Name" starProfilePicture="path/to/profile.jpg" />} />
+              <Route path="/chat/:starId" element={<ChatPage />} />
+              <Route path="/messages" element={<MessagesPage />} />
             </Routes>
           </main>
           <Footer />

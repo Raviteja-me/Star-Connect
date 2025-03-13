@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, Star, Award, MessageCircle, Video, Image, Users, Mail, Phone } from 'lucide-react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { useAuth } from '../contexts/AuthContext';
 import AuthModal from '../components/AuthModal';
@@ -37,13 +37,27 @@ const StarDetailsPage = () => {
     }
   }, [starId]);
 
-    const handleChatButtonClick = () => {
-    if (user) {
-      // Redirect to chat page if user is logged in
-      navigate(`/chat/${starId}`);
-    } else {
-      // Open the authentication modal if user is not logged in
+  const handleChatButtonClick = async () => {
+    if (!user) {
       setIsAuthModalOpen(true);
+      return;
+    }
+
+    try {
+      // Create or get existing chat
+      const chatId = [user.uid, starId].sort().join('_');
+      
+      // Create chat document if it doesn't exist
+      const chatsRef = collection(db, 'chats');
+      await addDoc(chatsRef, {
+        participants: [user.uid, starId],
+        updatedAt: serverTimestamp(),
+      });
+
+      // Navigate to chat page
+      navigate(`/chat/${starId}`);
+    } catch (error) {
+      console.error('Error creating chat:', error);
     }
   };
 
@@ -85,7 +99,7 @@ const StarDetailsPage = () => {
   const embedVideoUrl = starData.videoIntroduction ? getYouTubeEmbedUrl(starData.videoIntroduction) : null;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Star Info */}
         <div>
@@ -241,15 +255,25 @@ const StarDetailsPage = () => {
                 Book Now
               </button>
 
-              {/* Chat Button (Placeholder) */}
-              <button onClick={handleChatButtonClick} className="w-full block text-center bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition">
-                Chat with Star
-              </button>
+              {/* Add Chat Button */}
+              <div className="mt-6 flex gap-4">
+                <button
+                  onClick={handleChatButtonClick}
+                  className="flex items-center justify-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                >
+                  <MessageCircle className="w-5 h-5 mr-2" />
+                  Chat with Star
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <AuthModal isOpen={isAuthModalOpen} onClose={handleAuthModalClose} />
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={handleAuthModalClose} 
+        redirectAfterLogin={`/chat/${starId}`}
+      />
     </div>
   );
 };
