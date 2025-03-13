@@ -67,9 +67,32 @@ const ChatPage = () => {
     return () => unsubscribe();
   }, [starId]);
 
+  // Add this function at the top of the component
+  const containsContactInfo = (message: string): boolean => {
+    // Phone number patterns (including international formats)
+    const phonePattern = /[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}/;
+    
+    // Email pattern
+    const emailPattern = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+    
+    // Social media handles/links
+    const socialMediaPattern = /(facebook|instagram|twitter|linkedin|fb|ig|whatsapp|telegram|snap|snapchat|discord|skype|\.com)/i;
+
+    return phonePattern.test(message) || 
+           emailPattern.test(message) || 
+           socialMediaPattern.test(message);
+  };
+
+  // Modify the handleSendMessage function
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || !auth.currentUser) return;
+
+    // Check for contact information
+    if (containsContactInfo(newMessage)) {
+      alert("Warning: Sharing contact information is not allowed. Please remove any phone numbers, email addresses, or social media handles.");
+      return;
+    }
 
     const chatId = [auth.currentUser.uid, starId].sort().join('_');
     const isUserStar = auth.currentUser.uid === starId;
