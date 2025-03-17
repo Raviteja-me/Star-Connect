@@ -12,6 +12,7 @@ import ChatPage from './pages/ChatPage';
 import MessagesPage from './pages/MessagesPage';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import PlanUpgradePage from './pages/PlanUpgradePage';
 
 function App() {
   const [isDark, setIsDark] = useState(false);
@@ -45,6 +46,7 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/chat/:starId" element={<ChatPage />} />
               <Route path="/messages" element={<MessagesPage />} />
+              <Route path="/plan-upgrade" element={<PlanUpgradePage />} />
             </Routes>
           </main>
           <Footer />

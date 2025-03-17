@@ -12,6 +12,8 @@
   "dependencies": {
     "@firebase/auth": "^1.9.1",
     "@headlessui/react": "^1.7.18",
+    "@stripe/react-stripe-js": "^3.4.0",
+    "@stripe/stripe-js": "^6.0.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "firebase": "^11.4.0",
     "lucide-react": "^0.344.0",
