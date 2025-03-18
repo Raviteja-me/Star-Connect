@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cors = require('cors')({origin: true});
 
-exports.createPaymentIntent = functions.https.onRequest((request, response) => {
+const createPaymentIntent = functions.https.onRequest((request, response) => {
   return cors(request, response, async () => {
     try {
       // Validate the request
@@ -35,7 +35,7 @@ exports.createPaymentIntent = functions.https.onRequest((request, response) => {
 });
 
 // Optional: Add a webhook handler for Stripe events
-exports.stripeWebhook = functions.https.onRequest(async (request, response) => {
+const stripeWebhook = functions.https.onRequest(async (request, response) => {
   const signature = request.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   
@@ -65,3 +65,8 @@ exports.stripeWebhook = functions.https.onRequest(async (request, response) => {
     response.status(400).send(`Webhook Error: ${error.message}`);
   }
 });
+
+module.exports = {
+  createPaymentIntent,
+  stripeWebhook
+};

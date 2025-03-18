@@ -7,7 +7,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 // Replace with your actual Stripe publishable key
-const stripePromise = loadStripe('pk_live_your_actual_publishable_key');
+const stripePromise = loadStripe('pk_live_51R30jsJIqVbqWMncnbLVJYDJ6smeCGrsMw7AHyxmu354YV7RVWIM00iHD4xq3GCU3iqfwSd7wQ26PWkjzY70gimo00S9GWyhaA');
 
 const CheckoutForm = ({ onPaymentSuccess, onPaymentError }) => {
   const stripe = useStripe();
@@ -28,7 +28,7 @@ const CheckoutForm = ({ onPaymentSuccess, onPaymentError }) => {
     try {
       // Call your backend to create a payment intent
       // Update this URL to your deployed cloud function
-      const response = await fetch('https://us-central1-your-project-id.cloudfunctions.net/createPaymentIntent', {
+      const response = await fetch('https://us-central1-lazyowner-7571d.cloudfunctions.net/createPaymentIntent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

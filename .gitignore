@@ -8,7 +8,12 @@
 
 # production
 /build
+/dist
 
+# Firebase
+/.firebase
+firebase-debug.log
+ui-debug.log
 
 # misc
 .DS_Store
@@ -17,13 +22,21 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.env.*
 
+# IDE
+/.idea
+/.vscode
+
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Firebase
-.firebase/
+# Firebase Functions
+functions/node_modules
+functions/.env
+functions/.env.*
 
 # Git Credential Manager logs
 gcm-diagnose.log
