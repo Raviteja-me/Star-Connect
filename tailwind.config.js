@@ -9,6 +9,13 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
+      fontSize: {
+        'responsive-base': ['16px', '24px'],
+        'responsive-lg': ['18px', '28px'],
+        'responsive-xl': ['20px', '30px'],
+        'responsive-2xl': ['24px', '36px'],
+        'responsive-3xl': ['30px', '45px'],
+      },
       aspectRatio: {
         'w-16': '16',
         'h-9': '9',
