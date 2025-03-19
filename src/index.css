@@ -114,3 +114,34 @@
         padding-top: 6rem; /* Adjust for mobile navbar height */
       }
     }
+
+    /* Add these responsive utilities */
+    @layer utilities {
+      .text-responsive {
+        font-size: clamp(1rem, 2.5vw, 1.5rem);
+      }
+      
+      .heading-responsive {
+        font-size: clamp(1.5rem, 5vw, 3.5rem);
+      }
+    }
+    
+    /* Update mobile styles */
+    @media (max-width: 768px) {
+      .scale-125 {
+        transform: scale(1); /* Reset scale on mobile */
+      }
+      
+      .text-6xl {
+        font-size: 2.5rem; /* Smaller heading on mobile */
+      }
+      
+      .text-2xl {
+        font-size: 1.25rem; /* Smaller subheading on mobile */
+      }
+      
+      .py-24 {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+      }
+    }
