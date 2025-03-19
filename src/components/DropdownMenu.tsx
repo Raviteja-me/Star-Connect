@@ -9,22 +9,11 @@ interface DropdownMenuProps {
   isDark: boolean;
   toggleDarkMode: () => void;
   onClose: () => void;
+  isStar: boolean; // Add this prop
 }
 
-const DropdownMenu: React.FC<DropdownMenuProps> = ({ isDark, toggleDarkMode, onClose }) => {
-  const [isStar, setIsStar] = useState(false);
-
-  useEffect(() => {
-    const checkStarRegistration = async () => {
-      if (auth.currentUser) {
-        const starRef = doc(db, 'stars', auth.currentUser.uid);
-        const starDoc = await getDoc(starRef);
-        setIsStar(starDoc.exists());
-      }
-    };
-
-    checkStarRegistration();
-  }, []);
+const DropdownMenu: React.FC<DropdownMenuProps> = ({ isDark, toggleDarkMode, onClose, isStar }) => {
+  // Remove useState and useEffect for isStar since we're getting it as prop
 
   const handleLogout = async () => {
     try {

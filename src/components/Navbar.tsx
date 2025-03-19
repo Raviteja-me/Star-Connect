@@ -5,13 +5,30 @@ import AuthModal from './AuthModal';
 import Logo from './Logo';
 import { useAuth } from '../contexts/AuthContext';
 import DropdownMenu from './DropdownMenu';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../config/firebase';
 
 const Navbar = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State for dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isStar, setIsStar] = useState(false);
   const { user } = useAuth();
+
+  useEffect(() => {
+    const checkStarRegistration = async () => {
+      if (user) {
+        const starRef = doc(db, 'stars', user.uid);
+        const starDoc = await getDoc(starRef);
+        setIsStar(starDoc.exists());
+      } else {
+        setIsStar(false);
+      }
+    };
+
+    checkStarRegistration();
+  }, [user]);
 
   useEffect(() => {
     if (localStorage.theme === 'dark' || (!localStorage.theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -75,7 +92,12 @@ const Navbar = () => {
                     <ChevronDown className="w-4 h-4" />
                   </button>
                   {isDropdownOpen && (
-                    <DropdownMenu isDark={isDark} toggleDarkMode={toggleDarkMode} onClose={closeDropdown} />
+                    <DropdownMenu 
+                      isDark={isDark} 
+                      toggleDarkMode={toggleDarkMode} 
+                      onClose={closeDropdown}
+                      isStar={isStar} // Pass isStar as prop
+                    />
                   )}
                 </div>
               ) : (

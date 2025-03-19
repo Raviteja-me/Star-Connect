@@ -15,30 +15,6 @@ const categories = [
   { id: 'Hip-Hop Artist', name: 'Hip-Hop Artist', icon: Mic, color: 'bg-red-500' }  // Added new category
 ];
 
-const featuredStars = [
-  {
-    id: 1,
-    name: 'John Smith',
-    category: 'Musicians',
-    image: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?auto=format&fit=crop&w=800',
-    price: '$1000/hour'
-  },
-  {
-    id: 2,
-    name: 'Emma Davis',
-    category: 'Actors',
-    image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800',
-    price: '$1500/hour'
-  },
-  {
-    id: 3,
-    name: 'Michael Jordan',
-    category: 'Athletes',
-    image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=800',
-    price: '$2000/hour'
-  },
-];
-
 const steps = [
   {
     title: 'Browse & Discover',
@@ -163,80 +139,106 @@ const HomePage = () => {
 
   return (
     <div className="text-gray-900 dark:text-gray-100">
-      {/* Hero Section */}
-      <section className="relative h-[600px] flex items-center justify-center text-white overflow-hidden">
+      {/* Enhanced Hero Section */}
+      <section className="relative h-[700px] flex items-center justify-center text-white overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-center transform scale-105 animate-slow-zoom"
           style={{
             backgroundImage: 'url(https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1920)',
           }}
         >
-          <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70"></div>
         </div>
 
-        <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
-          <div className="mb-8 flex justify-center">
+        <div className="relative z-10 text-center max-w-5xl mx-auto px-4">
+          <div className="mb-8 flex justify-center scale-125">
             <Logo size="lg" animated />
           </div>
-          <h1 className="text-5xl font-bold mb-6 animate-fade-in">Experience Unforgettable Moments with Your Favorite Rock Stars</h1>
-          <p className="text-xl mb-8 animate-fade-in-delay">Book personalized experiences.</p>
-          <div className="flex justify-center gap-4 animate-fade-in-delay-2">
+          <h1 className="text-6xl font-bold mb-6 animate-fade-in bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-white">
+            Experience Unforgettable Moments with Your Favorite Rock Stars
+          </h1>
+          <p className="text-2xl mb-12 animate-fade-in-delay text-indigo-200">
+            Book personalized experiences with top artists
+          </p>
+          <div className="flex justify-center gap-6 animate-fade-in-delay-2">
             <button 
               onClick={() => handleActionClick('/book-star')}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-semibold transition transform hover:scale-105"
+              className="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white px-10 py-4 rounded-full font-semibold transition transform hover:scale-105 hover:shadow-xl hover:from-indigo-700 hover:to-indigo-900"
             >
               Book a Star
             </button>
-            <button
-              onClick={() => handleActionClick('/register-star')}
-              className="bg-white hover:bg-gray-100 text-indigo-600 px-8 py-3 rounded-lg font-semibold transition transform hover:scale-105"
-            >
-              Register as a Star
-            </button>
+            {!user && (
+              <button
+                onClick={() => handleActionClick('/register-star')}
+                className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-10 py-4 rounded-full font-semibold transition transform hover:scale-105 hover:bg-white/20 hover:shadow-xl"
+              >
+                Register as a Star
+              </button>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-800">
+      {/* Enhanced Categories Section */}
+      <section className="py-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 dark:text-white">Browse by Category</h2>
+          <h2 className="text-4xl font-bold text-center mb-16 dark:text-white">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+              Browse by Category
+            </span>
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {categories.map((category) => (
               <div
                 key={category.id}
                 onClick={() => handleActionClick(`/category/${category.id}`)}
-                className="bg-white dark:bg-gray-700 rounded-xl shadow-md p-6 cursor-pointer transform hover:scale-105 transition"
+                className="bg-white dark:bg-gray-700 rounded-2xl shadow-lg hover:shadow-2xl p-8 cursor-pointer transform hover:scale-105 transition-all duration-300 border border-gray-100 dark:border-gray-600"
               >
-                <div className={`${category.color} w-12 h-12 rounded-lg flex items-center justify-center mb-4`}>
-                  <category.icon className="w-6 h-6 text-white" />
+                <div className={`${category.color} w-16 h-16 rounded-xl flex items-center justify-center mb-6 transform rotate-3 hover:rotate-6 transition-transform`}>
+                  <category.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold dark:text-white">{category.name}</h3>
+                <h3 className="text-2xl font-semibold dark:text-white">{category.name}</h3>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Featured Stars Section */}
-      <section className="py-16 dark:bg-gray-900">
+      {/* Enhanced Featured Stars Section */}
+      <section className="py-24 bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12 dark:text-white">Featured Stars</h2>
+          <h2 className="text-4xl font-bold text-center mb-16 dark:text-white">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
+              Featured Stars
+            </span>
+          </h2>
           {loading ? (
-            <div className="text-center">Loading featured stars...</div>
+            <div className="text-center text-2xl text-gray-600 dark:text-gray-400">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+              Loading featured stars...
+            </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {featuredStars.map((star) => (
                 <div
                   key={star.id}
                   onClick={() => handleActionClick(`/star/${star.id}`)}
-                  className="bg-white dark:bg-gray-700 rounded-xl shadow-md overflow-hidden cursor-pointer transform hover:scale-105 transition"
+                  className="group bg-white dark:bg-gray-700 rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden cursor-pointer transform hover:scale-105 transition-all duration-300"
                 >
-                  <img src={star.profilePicture} alt={star.name} className="w-full h-48 object-cover" />
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-2 dark:text-white">{star.name}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 mb-2">{star.category}</p>
-                    <p className="text-indigo-600 dark:text-indigo-400 font-semibold">${star.hourlyRate}/hour</p>
+                  <div className="relative">
+                    <img 
+                      src={star.profilePicture} 
+                      alt={star.name} 
+                      className="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  </div>
+                  <div className="p-8">
+                    <h3 className="text-2xl font-semibold mb-3 dark:text-white">{star.name}</h3>
+                    <p className="text-gray-600 dark:text-gray-300 mb-3 text-lg">{star.category}</p>
+                    <p className="text-indigo-600 dark:text-indigo-400 font-semibold text-xl">
+                      ${star.hourlyRate}/hour
+                    </p>
                   </div>
                 </div>
               ))}
