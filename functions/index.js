@@ -1,7 +1,6 @@
+require('dotenv').config();
 const functions = require('./stripe-payment');
 
-// Export all functions
-module.exports = {
-  createPaymentIntent: functions.createPaymentIntent,
-  stripeWebhook: functions.stripeWebhook
-};
+// Export both functions from a single project
+exports.createPaymentIntent = functions.createPaymentIntent;
+exports.stripeWebhook = functions.stripeWebhook;

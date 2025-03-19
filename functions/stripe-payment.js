@@ -1,43 +1,60 @@
 const functions = require('firebase-functions');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const cors = require('cors')({origin: true});
+const config = functions.config();
+const stripe = require('stripe')(config.stripe.secret_key);
 
-const createPaymentIntent = functions.https.onRequest((request, response) => {
-  return cors(request, response, async () => {
-    try {
-      // Validate the request
-      if (request.method !== 'POST') {
-        return response.status(405).send('Method Not Allowed');
-      }
+const createPaymentIntent = functions
+  .runWith({
+    enforceAppCheck: false // Disable Firebase App Check
+  })
+  .https.onRequest(async (request, response) => {
+  // Set CORS headers directly
+  response.set('Access-Control-Allow-Origin', '*');
+  response.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  response.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-      const { amount } = request.body;
-      
-      // Create a PaymentIntent
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount,
-        currency: 'usd',
-        // Optional metadata
-        metadata: {
-          integration_check: 'accept_a_payment',
-          application: 'star-connect'
-        }
-      });
+  if (request.method === 'OPTIONS') {
+    response.status(204).send('');
+    return;
+  
+  }
 
-      // Return the client secret to the frontend
-      return response.status(200).json({ 
-        clientSecret: paymentIntent.client_secret 
-      });
-    } catch (error) {
-      console.error('Error creating payment intent:', error);
-      return response.status(500).json({ error: error.message });
+  console.log('Request headers:', request.headers);
+  console.log('Request received:', request.body);
+  try {
+    if (request.method !== 'POST') {
+      return response.status(405).send('Method Not Allowed');
     }
-  });
+
+    const { amount } = request.body;
+    console.log('Amount:', amount);
+    console.log('Using Stripe key:', config.stripe.secret_key ? 'Key exists' : 'No key found');
+
+    if (!amount) {
+      return response.status(400).json({ error: 'Amount is required' });
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: parseInt(amount),
+      currency: 'usd',
+      payment_method_types: ['card']
+    });
+
+    console.log('PaymentIntent created:', paymentIntent.id);
+    return response.status(200).json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    console.error('Detailed error:', error);
+    return response.status(500).json({ 
+      error: error.message,
+      code: error.code,
+      type: error.type
+    });
+  }
 });
 
 // Optional: Add a webhook handler for Stripe events
 const stripeWebhook = functions.https.onRequest(async (request, response) => {
   const signature = request.headers['stripe-signature'];
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const webhookSecret = config.stripe.webhook_secret;
   
   try {
     const event = stripe.webhooks.constructEvent(

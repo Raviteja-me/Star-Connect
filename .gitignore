@@ -9,34 +9,56 @@
 # production
 /build
 /dist
+/.netlify
 
 # Firebase
 /.firebase
 firebase-debug.log
 ui-debug.log
+.firebaserc
+firebase-config.js
 
-# misc
-.DS_Store
+# Environment Variables
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.development
+.env.test
+.env.production
 .env.*
 
 # IDE
 /.idea
 /.vscode
+*.sublime-*
+*.swp
+*.swo
 
 # Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+firebase-debug.*
+ui-debug.*
 
 # Firebase Functions
-functions/node_modules
+functions/node_modules/
 functions/.env
 functions/.env.*
+functions/.runtimeconfig.json
+functions/lib
 
-# Git Credential Manager logs
-gcm-diagnose.log
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Stripe
+stripe.json
+.stripe
+
+# Build configuration
+.netlify.toml

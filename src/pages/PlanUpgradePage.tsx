@@ -8,7 +8,6 @@ import { Elements, CardElement, useStripe, useElements } from '@stripe/react-str
 
 // Replace with your actual Stripe publishable key
 const stripePromise = loadStripe('pk_live_51R30jsJIqVbqWMncnbLVJYDJ6smeCGrsMw7AHyxmu354YV7RVWIM00iHD4xq3GCU3iqfwSd7wQ26PWkjzY70gimo00S9GWyhaA');
-
 const CheckoutForm = ({ onPaymentSuccess, onPaymentError }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -28,16 +27,22 @@ const CheckoutForm = ({ onPaymentSuccess, onPaymentError }) => {
     try {
       // Call your backend to create a payment intent
       // Update this URL to your deployed cloud function
+      // In the handleSubmit function
       const response = await fetch('https://us-central1-lazyowner-7571d.cloudfunctions.net/createPaymentIntent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ amount: 4900 }), // $49.00 in cents
+        body: JSON.stringify({ 
+          amount: 4900,  // Make sure this is a number
+        }),
       });
-
+      
+      // Add error logging
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorData = await response.json();
+        console.error('Payment Intent Error:', errorData);
+        throw new Error(errorData.error || 'Payment processing failed');
       }
 
       const data = await response.json();
