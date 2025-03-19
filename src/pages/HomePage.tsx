@@ -151,26 +151,26 @@ const HomePage = () => {
         </div>
 
         <div className="relative z-10 text-center max-w-5xl mx-auto px-4">
-          <div className="mb-8 flex justify-center scale-125">
+          <div className="mb-8 flex justify-center scale-100 md:scale-125">
             <Logo size="lg" animated />
           </div>
-          <h1 className="text-6xl font-bold mb-6 animate-fade-in bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-white">
+          <h1 className="text-3xl md:text-6xl font-bold mb-6 animate-fade-in bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-white">
             Experience Unforgettable Moments with Your Favorite Rock Stars
           </h1>
-          <p className="text-2xl mb-12 animate-fade-in-delay text-indigo-200">
+          <p className="text-lg md:text-2xl mb-8 md:mb-12 animate-fade-in-delay text-indigo-200">
             Book personalized experiences with top artists
           </p>
-          <div className="flex justify-center gap-6 animate-fade-in-delay-2">
+          <div className="flex flex-col md:flex-row justify-center gap-4 md:gap-6 animate-fade-in-delay-2">
             <button 
               onClick={() => handleActionClick('/book-star')}
-              className="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white px-10 py-4 rounded-full font-semibold transition transform hover:scale-105 hover:shadow-xl hover:from-indigo-700 hover:to-indigo-900"
+              className="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white px-6 md:px-10 py-3 md:py-4 rounded-full font-semibold transition transform hover:scale-105 hover:shadow-xl hover:from-indigo-700 hover:to-indigo-900"
             >
               Book a Star
             </button>
             {!user && (
               <button
                 onClick={() => handleActionClick('/register-star')}
-                className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-10 py-4 rounded-full font-semibold transition transform hover:scale-105 hover:bg-white/20 hover:shadow-xl"
+                className="bg-white/10 backdrop-blur-md border border-white/30 text-white px-6 md:px-10 py-3 md:py-4 rounded-full font-semibold transition transform hover:scale-105 hover:bg-white/20 hover:shadow-xl"
               >
                 Register as a Star
               </button>
@@ -182,7 +182,7 @@ const HomePage = () => {
       {/* Enhanced Categories Section */}
       <section className="py-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16 dark:text-white">
+          <h2 className="text-2xl md:text-4xl font-bold text-center mb-8 md:mb-16 dark:text-white">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
               Browse by Category
             </span>
@@ -197,7 +197,7 @@ const HomePage = () => {
                 <div className={`${category.color} w-16 h-16 rounded-xl flex items-center justify-center mb-6 transform rotate-3 hover:rotate-6 transition-transform`}>
                   <category.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-2xl font-semibold dark:text-white">{category.name}</h3>
+                <h3 className="text-xl md:text-2xl font-semibold dark:text-white">{category.name}</h3>
               </div>
             ))}
           </div>
