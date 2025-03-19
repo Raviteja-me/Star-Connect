@@ -1,7 +1,10 @@
 [build]
   command = "npm run build"
-  publish = "build"
+  publish = "dist"  # Changed from "build" to "dist"
   functions = "functions"
+
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core"  # Added this plugin
 
 [[redirects]]
   from = "/*"
