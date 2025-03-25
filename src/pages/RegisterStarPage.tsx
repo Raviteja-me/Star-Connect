@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, Briefcase, Award, DollarSign, Image, Video, Music, Film, File, PlusCircle } from 'lucide-react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { updateProfile } from 'firebase/auth';
 import { db, auth } from '../config/firebase';
+import { toast } from 'react-hot-toast';
 
 const RegisterStarPage = () => {
   const navigate = useNavigate();
@@ -115,34 +117,46 @@ const RegisterStarPage = () => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
+  
     if (!auth.currentUser) {
-      setError('User not authenticated.');
+      setError('User not authenticated. Please sign in first.');
       setLoading(false);
       return;
     }
-
+  
     const user = auth.currentUser;
     const storage = getStorage();
-
+  
     try {
+      console.log('Starting star registration process...');
+      
+      // Validate required fields
+      if (!formData.name || !formData.email || !formData.phone || !formData.category) {
+        throw new Error('Please fill in all required fields');
+      }
+  
       // Upload Government ID
       let governmentIdUrl = '';
       if (formData.governmentId) {
+        console.log('Uploading government ID...');
         const governmentIdRef = ref(storage, `governmentIds/${user.uid}/${formData.governmentId.name}`);
         const snapshot = await uploadBytes(governmentIdRef, formData.governmentId);
         governmentIdUrl = await getDownloadURL(snapshot.ref);
+        console.log('Government ID uploaded successfully');
       }
-
+  
       // Upload Profile Picture
       let profilePictureUrl = formData.profilePicture;
       if (formData.profilePictureType === 'file' && formData.profilePicture) {
+        console.log('Uploading profile picture...');
         const profilePictureRef = ref(storage, `profilePictures/${user.uid}/${formData.profilePicture.name}`);
         const snapshot = await uploadBytes(profilePictureRef, formData.profilePicture);
         profilePictureUrl = await getDownloadURL(snapshot.ref);
+        console.log('Profile picture uploaded successfully');
       }
-
+  
       // Upload Advertising Images
+      console.log('Processing advertising images...');
       const advertisingImageUrls = [];
       for (const image of formData.advertisingImages) {
         if (image.type === 'file' && image.value) {
@@ -154,7 +168,8 @@ const RegisterStarPage = () => {
           advertisingImageUrls.push(image.value);
         }
       }
-
+      console.log('Advertising images processed successfully');
+  
       // Prepare data for Firestore
       const starData = {
         name: formData.name,
@@ -168,14 +183,31 @@ const RegisterStarPage = () => {
         socialMediaLinks: formData.socialMediaLinks,
         governmentId: governmentIdUrl,
         advertisingImages: advertisingImageUrls,
+        createdAt: serverTimestamp(),
+        userId: user.uid,
+        rating: 0,
+        totalBookings: 0,
+        isActive: true
       };
-
+  
+      console.log('Saving star data to Firestore...', starData);
+  
       // Save to Firestore
       await setDoc(doc(db, 'stars', user.uid), starData);
-      navigate('/'); // Redirect to home page after successful registration
+      console.log('Star registration completed successfully');
+      
+      // Update user profile
+      await updateProfile(user, {
+        displayName: formData.name,
+        photoURL: profilePictureUrl
+      });
+  
+      toast.success('Registration successful!');
+      navigate('/profile');
     } catch (error) {
       console.error('Error registering star:', error);
-      setError('Failed to register. Please try again.');
+      setError(error.message || 'Failed to register. Please try again.');
+      toast.error('Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
