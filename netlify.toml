@@ -1,10 +1,15 @@
 [build]
   command = "npm run build"
-  publish = "dist"  # Changed from "build" to "dist"
+  publish = "dist"
   functions = "functions"
 
 [[plugins]]
-  package = "@netlify/plugin-functions-install-core"  # Added this plugin
+  package = "@netlify/plugin-functions-install-core"
+
+# Add Firebase configuration
+[functions]
+  external_node_modules = ["firebase-admin", "firebase"]
+  included_files = ["firebase-config.json"]
 
 [[redirects]]
   from = "/*"
@@ -15,6 +20,13 @@
   CI = "false"
   NODE_VERSION = "18"
   NPM_FLAGS = "--no-audit --no-fund"
+  # Add Firebase environment variables
+  VITE_FIREBASE_API_KEY = "${FIREBASE_API_KEY}"
+  VITE_FIREBASE_AUTH_DOMAIN = "${FIREBASE_AUTH_DOMAIN}"
+  VITE_FIREBASE_PROJECT_ID = "${FIREBASE_PROJECT_ID}"
+  VITE_FIREBASE_STORAGE_BUCKET = "${FIREBASE_STORAGE_BUCKET}"
+  VITE_FIREBASE_MESSAGING_SENDER_ID = "${FIREBASE_MESSAGING_SENDER_ID}"
+  VITE_FIREBASE_APP_ID = "${FIREBASE_APP_ID}"
 
 [context.production]
   command = "npm run build"
@@ -22,6 +34,5 @@
 [context.production.environment]
   VITE_APP_ENV = "production"
 
-# Increase build memory limit
 [build.processing]
   skip_processing = false
