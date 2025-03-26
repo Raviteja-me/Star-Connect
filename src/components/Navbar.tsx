@@ -71,6 +71,22 @@ const Navbar = () => {
             </Link>
 
             <div className="hidden md:flex items-center space-x-4">
+              {user && !isStar && (
+                <Link
+                  to="/register-star"
+                  className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+                >
+                  Register as Star
+                </Link>
+              )}
+              {user && isStar && (
+                <Link
+                  to="/profile"
+                  className="text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+                >
+                  Profile
+                </Link>
+              )}
               <button
                 onClick={toggleDarkMode}
                 className="p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
