@@ -28,6 +28,17 @@ const Navbar = () => {
     };
 
     checkStarRegistration();
+
+    // Add event listener for star registration
+    const handleStarRegistered = () => {
+      checkStarRegistration();
+    };
+
+    window.addEventListener('starRegistered', handleStarRegistered);
+
+    return () => {
+      window.removeEventListener('starRegistered', handleStarRegistered);
+    };
   }, [user]);
 
   useEffect(() => {

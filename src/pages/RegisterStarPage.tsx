@@ -113,6 +113,7 @@ const RegisterStarPage = () => {
     }));
   };
 
+  // In handleSubmit function, after successful registration
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -202,7 +203,11 @@ const RegisterStarPage = () => {
         photoURL: profilePictureUrl
       });
   
-      toast.success('Registration successful!');
+      // After successful registration
+      // Dispatch custom event for navbar update
+      window.dispatchEvent(new CustomEvent('starRegistered'));
+      
+      toast.success('Successfully registered as a star!');
       navigate('/profile');
     } catch (error) {
       console.error('Error registering star:', error);

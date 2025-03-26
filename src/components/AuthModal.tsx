@@ -2,6 +2,9 @@ import React, { useState, useContext, useEffect } from 'react';
 import { X, User, Mail, Lock } from 'lucide-react';
 import { AuthContext } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { db } from '../config/firebase';
+import { toast } from 'react-hot-toast';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -44,16 +47,29 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, redirectAfterLog
         }, 2000);
       } else {
         await signUp(email, password, username);
-        // Close the modal immediately after signup
+        
+        // Check if user was registered as a star
+        if (redirectAfterLogin === '/profile') {
+          const user = auth.currentUser;
+          if (user) {
+            const starRef = doc(db, 'stars', user.uid);
+            const starDoc = await getDoc(starRef);
+            if (starDoc.exists()) {
+              toast.success('Successfully registered as a star!');
+              // Force reload to update navbar state
+              window.location.href = '/profile';
+              return;
+            }
+          }
+        }
+        
         onClose();
-        // Optional: Show a toast or notification that account was created
       }
     } catch (error) {
       console.error("Authentication error:", error.message);
       if (!error.message.includes("permissions")) {
         setError(error.message);
       } else {
-        // If it's a permissions error, just close the modal as signup was successful
         onClose();
       }
     }
