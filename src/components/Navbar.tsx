@@ -163,7 +163,13 @@ const Navbar = () => {
                     <ChevronDown className="w-4 h-4" />
                 </button>
                 {isDropdownOpen && (
-                    <DropdownMenu isDark={isDark} toggleDarkMode={toggleDarkMode} onClose={closeDropdown}/>
+                    <DropdownMenu 
+                      isDark={isDark} 
+                      toggleDarkMode={toggleDarkMode} 
+                      onClose={closeDropdown}
+                      isStar={isStar}
+                      closeDrawer={() => setIsDrawerOpen(false)}
+                    />
                 )}
               </div>
             ) : (
